@@ -1,0 +1,4 @@
+name: monthly_order_summary
+properties:
+  description: One row per order month. Order-grain metrics in AUD, including all
+    statuses; completed amount is separately identified.

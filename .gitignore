@@ -1,0 +1,45 @@
+# Generated Wren/dbt artifacts
+target/
+logs/
+dbt_packages/
+dbt_modules/
+
+# Local environments and Python caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local databases and write-ahead logs
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp/
+*.db
+*.db-wal
+*.db-shm
+
+# Machine-specific connection settings and secrets
+.env
+.env.*
+!.env.example
+!.env.template
+profiles.yml
+profiles.yaml
+connection.local.*
+*.local.yml
+*.local.yaml
+.wren/
+.dbt/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini

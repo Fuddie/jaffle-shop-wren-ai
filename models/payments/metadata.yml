@@ -1,0 +1,39 @@
+name: payments
+table_reference:
+  catalog: jaffle_shop
+  schema: main
+  table: stg_payments
+primary_key: payment_id
+columns:
+- name: payment_id
+  type: INT
+  is_calculated: false
+  not_null: true
+  is_primary_key: true
+  properties:
+    description: Payment id
+- name: order_id
+  type: INT
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Order id
+- name: payment_method
+  type: TEXT
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Payment method
+- name: amount
+  type: DOUBLE
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Recorded amount in AUD, including all payment methods; not refund-adjusted.
+cached: false
+properties:
+  description: One row per payment. Source staging view converts raw integer cents
+    to AUD; do not divide amount by 100 again.

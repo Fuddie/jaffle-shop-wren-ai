@@ -1,0 +1,4 @@
+statement: SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,
+  COUNT(DISTINCT customer_id) AS purchasing_customers, SUM(amount) AS total_order_amount,
+  AVG(amount) AS average_order_value, SUM(CASE WHEN status = 'completed' THEN amount
+  ELSE 0 END) AS completed_order_amount FROM orders GROUP BY DATE_TRUNC('month', order_date)

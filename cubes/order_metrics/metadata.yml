@@ -1,0 +1,26 @@
+name: order_metrics
+base_object: orders
+measures:
+- name: order_count
+  expression: COUNT(*)
+  type: BIGINT
+- name: purchasing_customers
+  expression: COUNT(DISTINCT customer_id)
+  type: BIGINT
+- name: total_order_amount
+  expression: SUM(amount)
+  type: DOUBLE
+- name: average_order_value
+  expression: AVG(amount)
+  type: DOUBLE
+- name: completed_order_amount
+  expression: SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END)
+  type: DOUBLE
+dimensions:
+- name: status
+  expression: status
+  type: VARCHAR
+time_dimensions:
+- name: order_date
+  expression: order_date
+  type: DATE

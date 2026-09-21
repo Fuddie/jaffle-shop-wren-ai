@@ -1,0 +1,61 @@
+name: customers
+table_reference:
+  catalog: jaffle_shop
+  schema: main
+  table: customers
+primary_key: customer_id
+columns:
+- name: customer_id
+  type: INT
+  is_calculated: false
+  not_null: true
+  is_primary_key: true
+  properties:
+    description: Customer id
+- name: first_name
+  type: TEXT
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: First name
+- name: last_name
+  type: TEXT
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Last name
+- name: first_order
+  type: DATE
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: First order
+- name: most_recent_order
+  type: DATE
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Most recent order
+- name: number_of_orders
+  type: BIGINT
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Lifetime order count across all statuses; NULL means no orders.
+- name: customer_lifetime_value
+  type: DOUBLE
+  is_calculated: false
+  not_null: false
+  is_primary_key: false
+  properties:
+    description: Lifetime recorded payment amount in AUD; NULL means no payments.
+      Aggregate only at customer grain.
+cached: false
+properties:
+  description: One row per customer, including customers with no orders. Lifetime
+    value is all recorded payments in AUD, without refund adjustments.
