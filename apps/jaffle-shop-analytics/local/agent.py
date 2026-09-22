@@ -141,7 +141,7 @@ class Run:
             if time.monotonic() >= deadline:
                 stop_tree(self.process)
                 self.process.communicate()
-                raise Rejected('The question exceeded the three-minute limit. Try a simpler question.')
+                raise Rejected(f'The question exceeded the {self.timeout:g}-second limit. Try a simpler question.')
             try:
                 output,error=self.process.communicate(payload if first else None,timeout=min(0.5,max(0.01,deadline-time.monotonic())))
                 self.debug=error[-6000:]

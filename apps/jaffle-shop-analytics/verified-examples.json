@@ -1020,6 +1020,48 @@
       "elapsed_ms": 45342.0,
       "cached": false,
       "instant_verified": true
+    },
+    {
+      "question": "How many purchasing customers are there?",
+      "aliases": [
+        "How many customers placed an order?",
+        "How many customers have placed orders?",
+        "How many customers ordered?",
+        "What is the number of purchasing customers?"
+      ],
+      "accepted": true,
+      "answer": "62 distinct customers placed at least one order across all available dates and order statuses.",
+      "analyses": [
+        {
+          "title": "Distinct purchasing customers",
+          "columns": [
+            "purchasing_customers"
+          ],
+          "rows": [
+            [
+              62
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT COUNT(DISTINCT customer_id) AS purchasing_customers FROM orders"
+        }
+      ],
+      "models": [
+        "orders"
+      ],
+      "notes": [
+        "Purchasing customers are COUNT(DISTINCT customer_id) over orders: each non-null customer ID is counted once, regardless of the number of orders.",
+        "All available dates and order statuses are included. This counts customers who ordered, not all registered customers or only completed-order customers.",
+        "Purchasing-customer counts are not additive across months or statuses; the overall count is independently deduplicated.",
+        "This is a saved answer verified through Wren against the dbt Jaffle Shop sample dataset, not a new AI response.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "read_only": true,
+      "project_unchanged": true,
+      "instant_verified": true,
+      "cached": false
     }
   ]
 }

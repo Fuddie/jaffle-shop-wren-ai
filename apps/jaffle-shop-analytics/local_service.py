@@ -8,6 +8,8 @@ import threading
 import time
 import uuid
 import copy
+import logging
+import unicodedata
 from http.server import ThreadingHTTPServer
 from urllib.parse import urlsplit
 from agent import Run, TIMEOUT_SECONDS, executable
@@ -26,18 +28,31 @@ CACHE_FILE=APP/'local-cache.json'
 LOCK=threading.Lock()
 JOBS={}
 ACTIVE=None
+LOG=logging.getLogger('ask_wren')
 def normalize(question):
-    return ' '.join(question.casefold().split())
+    # Ignore presentation only, never words, numbers, or internal punctuation.
+    key=' '.join(unicodedata.normalize('NFKC',question).casefold().split())
+    return key[:-1].rstrip() if key.endswith(('?', '.')) else key
 def load_cache():
     try:
         data=json.loads(CACHE_FILE.read_text(encoding='utf-8'))
-        return {str(k):v for k,v in data.items() if isinstance(v,dict) and v.get('accepted') and v.get('read_only') and v.get('project_unchanged')}
+        return {normalize(str(k)):v for k,v in data.items() if isinstance(v,dict) and v.get('accepted') and v.get('read_only') and v.get('project_unchanged')}
     except (OSError,ValueError):
         return {}
 def load_curated():
     try:
         data=json.loads(CURATED_FILE.read_text(encoding='utf-8'))
-        return {normalize(x['question']):x for x in data.get('examples',[]) if isinstance(x,dict) and x.get('question') and x.get('accepted')}
+        matches={}
+        for answer in data.get('examples',[]):
+            if not isinstance(answer,dict) or not all(answer.get(k) for k in ('question','accepted','read_only','project_unchanged')):
+                continue
+            # Full-question aliases only. Ambiguous configuration fails closed.
+            for question in [answer['question'],*answer.get('aliases',[])]:
+                key=normalize(question_policy(question))
+                if key in matches and matches[key] is not answer:
+                    raise ValueError('Conflicting verified question aliases')
+                matches[key]=answer
+        return matches
     except (OSError,ValueError):
         return {}
 CACHE=load_cache()
@@ -55,13 +70,15 @@ def work(job_id,run):
         answer['cached']=False
         with LOCK:
             JOBS[job_id].update(state='complete',answer=answer,elapsed_ms=answer['elapsed_ms'],stage='Answer ready')
-            with LOCK:
-                CACHE[JOBS[job_id]['cache_key']]=copy.deepcopy(answer)
-                persist_cache()
+            CACHE[JOBS[job_id]['cache_key']]=copy.deepcopy(answer)
+            persist_cache()
+        LOG.info('job=%s state=complete elapsed_ms=%s',job_id,answer['elapsed_ms'])
     except Rejected as error:
+        LOG.info('job=%s state=rejected',job_id)
         with LOCK:
             JOBS[job_id].update(state='cancelled' if run.cancelled.is_set() else 'error',error=str(error),stage='Cancelled' if run.cancelled.is_set() else 'Error')
     except Exception:
+        LOG.error('job=%s state=error',job_id)
         with LOCK:
             JOBS[job_id].update(state='error',error='The local question service could not complete this request. Try Verified examples.')
     finally:
@@ -151,16 +168,18 @@ class Handler(StaticHandler):
             path=urlsplit(self.path).path
             if path=='/api/ask':
                 question=question_policy(payload.get('question'))
-                key=' '.join(question.casefold().split())
+                key=normalize(question)
                 with LOCK:
                     if ACTIVE is not None:
                         return self.reply(409,{'error':'One question is already running. Wait for it to finish or cancel it.'})
                     job_id=uuid.uuid4().hex
                     if key in CURATED:
+                        LOG.info('job=%s route=verified',job_id)
                         answer=copy.deepcopy(CURATED[key]); answer.update(mode='local',cached=False,instant_verified=True,elapsed_ms=0.0)
                         JOBS.clear(); JOBS[job_id]={'state':'complete','answer':answer,'elapsed_ms':0.0,'stage':'Instant verified answer','cache_key':key}
                         return self.reply(202,{'id':job_id,'state':'running','verified':True})
                     if key in CACHE:
+                        LOG.info('job=%s route=cache',job_id)
                         answer=copy.deepcopy(CACHE[key]); answer['cached']=True; answer['elapsed_ms']=0.0
                         JOBS.clear(); JOBS[job_id]={'state':'complete','answer':answer,'elapsed_ms':0.0,'stage':'Cached answer','cache_key':key}
                         return self.reply(202,{'id':job_id,'state':'running','cached':True})
@@ -168,6 +187,7 @@ class Handler(StaticHandler):
                     JOBS.clear()
                     JOBS[job_id]={'state':'running','run':run,'started_at':time.monotonic(),'stage':'Understanding question','cache_key':key}
                     ACTIVE=job_id
+                    LOG.info('job=%s route=live executor=codex_exec',job_id)
                 threading.Thread(target=work,args=(job_id,run),daemon=True).start()
                 return self.reply(202,{'id':job_id,'state':'running'})
             if path=='/api/cache/clear':
@@ -195,6 +215,7 @@ class Handler(StaticHandler):
             if job_id in JOBS: JOBS[job_id]['stage']=stage
 
 if __name__=='__main__':
+    logging.basicConfig(level=logging.INFO,format='%(asctime)s %(name)s %(message)s')
     print(f'Jaffle Shop and Ask Wren: {ORIGIN}/',flush=True)
     print('Local demo. One read-only question at a time. Ctrl+C stops the service.',flush=True)
     server=ThreadingHTTPServer(('127.0.0.1',PORT),Handler)
