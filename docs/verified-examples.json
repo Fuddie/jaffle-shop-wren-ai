@@ -1,0 +1,1025 @@
+{
+  "verified_at": "2026-09-22",
+  "examples": [
+    {
+      "question": "Which five customers have the highest total order amount?",
+      "accepted": true,
+      "answer": "Howard R. has the highest total order amount at AUD 99.00, followed by Kathleen P., Norma C., Christina W., and Rose M.",
+      "analyses": [
+        {
+          "title": "Top five customers",
+          "columns": [
+            "customer_id",
+            "first_name",
+            "last_name",
+            "order_count",
+            "total_order_amount"
+          ],
+          "rows": [
+            [
+              51,
+              "Howard",
+              "R.",
+              3,
+              99.0
+            ],
+            [
+              3,
+              "Kathleen",
+              "P.",
+              3,
+              65.0
+            ],
+            [
+              46,
+              "Norma",
+              "C.",
+              2,
+              64.0
+            ],
+            [
+              30,
+              "Christina",
+              "W.",
+              2,
+              57.0
+            ],
+            [
+              54,
+              "Rose",
+              "M.",
+              5,
+              57.0
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\n\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 5"
+        }
+      ],
+      "models": [
+        "customers",
+        "orders"
+      ],
+      "notes": [
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders.",
+        "This is a saved answer verified through Wren against the dbt Jaffle Shop sample dataset, not a new AI response."
+      ],
+      "mode": "verified",
+      "read_only": true,
+      "project_unchanged": true,
+      "instant_verified": true,
+      "cached": false
+    },
+    {
+      "question": "Show monthly order performance.",
+      "accepted": true,
+      "answer": "Monthly amounts reconcile to AUD 1,672.00 across 99 orders. March has the largest recorded total at AUD 622.00. Monthly purchasing-customer counts are not additive.",
+      "analyses": [
+        {
+          "title": "Monthly order performance",
+          "columns": [
+            "order_month",
+            "order_count",
+            "purchasing_customers",
+            "total_order_amount",
+            "average_order_value",
+            "completed_order_amount"
+          ],
+          "rows": [
+            [
+              "2018-01-01 00:00:00",
+              29,
+              24,
+              496.0,
+              17.103448275862068,
+              424.0
+            ],
+            [
+              "2018-02-01 00:00:00",
+              27,
+              25,
+              415.0,
+              15.37037037037037,
+              400.0
+            ],
+            [
+              "2018-03-01 00:00:00",
+              35,
+              31,
+              622.0,
+              17.771428571428572,
+              279.0
+            ],
+            [
+              "2018-04-01 00:00:00",
+              8,
+              8,
+              139.0,
+              17.375,
+              0.0
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT order_month, order_count, purchasing_customers, total_order_amount, average_order_value, completed_order_amount\nFROM monthly_order_summary\nORDER BY order_month"
+        }
+      ],
+      "models": [
+        "monthly_order_summary",
+        "orders"
+      ],
+      "notes": [
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders.",
+        "This is a saved answer verified through Wren against the dbt Jaffle Shop sample dataset, not a new AI response."
+      ],
+      "mode": "verified",
+      "read_only": true,
+      "project_unchanged": true,
+      "instant_verified": true,
+      "cached": false
+    },
+    {
+      "question": "How many customers placed more than one order?",
+      "accepted": true,
+      "answer": "29 customers placed more than one order across all available dates and statuses.",
+      "analyses": [
+        {
+          "title": "Repeat-order customers",
+          "columns": [
+            "repeat_order_customers"
+          ],
+          "rows": [
+            [
+              29
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT COUNT(*) AS repeat_order_customers FROM (SELECT customer_id FROM orders GROUP BY customer_id HAVING COUNT(*) > 1) AS repeat_customers"
+        }
+      ],
+      "models": [
+        "orders"
+      ],
+      "notes": [
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders.",
+        "This is a saved answer verified through Wren against the dbt Jaffle Shop sample dataset, not a new AI response."
+      ],
+      "mode": "verified",
+      "read_only": true,
+      "project_unchanged": true,
+      "instant_verified": true,
+      "cached": false
+    },
+    {
+      "question": "Compare total and completed-order amounts.",
+      "accepted": true,
+      "answer": "Total order amount is AUD 1,672.00; completed-order amount is AUD 1,103.00. The difference of AUD 569.00 belongs to other statuses, not inferred refunds.",
+      "analyses": [
+        {
+          "title": "Order amount comparison",
+          "columns": [
+            "total_order_amount",
+            "completed_order_amount"
+          ],
+          "rows": [
+            [
+              1672.0,
+              1103.0
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT SUM(amount) AS total_order_amount, SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount FROM orders"
+        }
+      ],
+      "models": [
+        "orders"
+      ],
+      "notes": [
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders.",
+        "This is a saved answer verified through Wren against the dbt Jaffle Shop sample dataset, not a new AI response."
+      ],
+      "mode": "verified",
+      "read_only": true,
+      "project_unchanged": true,
+      "instant_verified": true,
+      "cached": false
+    },
+    {
+      "question": "Are there any data-quality failures?",
+      "accepted": true,
+      "answer": "All three checks pass with zero issues: orders without customers, payments without orders, and order/payment amount mismatches.",
+      "analyses": [
+        {
+          "title": "Orders without customers",
+          "columns": [
+            "issues"
+          ],
+          "rows": [
+            [
+              0
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT COUNT(*) AS issues FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL"
+        },
+        {
+          "title": "Payments without orders",
+          "columns": [
+            "issues"
+          ],
+          "rows": [
+            [
+              0
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "SELECT COUNT(*) AS issues FROM payments p LEFT JOIN orders o ON p.order_id = o.order_id WHERE o.order_id IS NULL"
+        },
+        {
+          "title": "Order/payment amount mismatches",
+          "columns": [
+            "issues"
+          ],
+          "rows": [
+            [
+              0
+            ]
+          ],
+          "truncated": false,
+          "read_only": true,
+          "sql": "WITH payment_totals AS (SELECT order_id, SUM(amount) AS payment_amount FROM payments GROUP BY order_id)\nSELECT COUNT(*) AS issues FROM orders o\nLEFT JOIN payment_totals pt ON o.order_id = pt.order_id\nWHERE ABS(o.amount - pt.payment_amount) > 0.000001\n   OR (o.amount IS NULL AND pt.payment_amount IS NOT NULL)\n   OR (o.amount IS NOT NULL AND pt.payment_amount IS NULL)"
+        }
+      ],
+      "models": [
+        "customers",
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders.",
+        "This is a saved answer verified through Wren against the dbt Jaffle Shop sample dataset, not a new AI response."
+      ],
+      "mode": "verified",
+      "read_only": true,
+      "project_unchanged": true,
+      "instant_verified": true,
+      "cached": false
+    },
+    {
+      "accepted": true,
+      "answer": "38 customers have no orders.",
+      "analyses": [
+        {
+          "title": "Customers with no orders",
+          "sql": "SELECT c.customer_id, c.first_name, c.last_name\nFROM customers AS c\nLEFT JOIN orders AS o\n  ON c.customer_id = o.customer_id\nWHERE o.order_id IS NULL\nORDER BY c.customer_id",
+          "columns": [
+            "customer_id",
+            "first_name",
+            "last_name"
+          ],
+          "rows": [
+            [
+              4,
+              "Jimmy",
+              "C."
+            ],
+            [
+              5,
+              "Katherine",
+              "R."
+            ],
+            [
+              10,
+              "Henry",
+              "W."
+            ],
+            [
+              14,
+              "Steve",
+              "F."
+            ],
+            [
+              15,
+              "Teresa",
+              "H."
+            ],
+            [
+              17,
+              "Kimberly",
+              "R."
+            ],
+            [
+              23,
+              "Mildred",
+              "A."
+            ],
+            [
+              24,
+              "David",
+              "G."
+            ],
+            [
+              29,
+              "Benjamin",
+              "K."
+            ],
+            [
+              37,
+              "Shirley",
+              "J."
+            ],
+            [
+              43,
+              "Kelly",
+              "N."
+            ],
+            [
+              44,
+              "Jane",
+              "R."
+            ],
+            [
+              45,
+              "Scott",
+              "B."
+            ],
+            [
+              48,
+              "Lillian",
+              "C."
+            ],
+            [
+              49,
+              "Judy",
+              "N."
+            ],
+            [
+              55,
+              "Nicholas",
+              "R."
+            ],
+            [
+              56,
+              "Joshua",
+              "K."
+            ],
+            [
+              58,
+              "Kathryn",
+              "K."
+            ],
+            [
+              60,
+              "Norma",
+              "W."
+            ],
+            [
+              61,
+              "Timothy",
+              "R."
+            ],
+            [
+              62,
+              "Elizabeth",
+              "P."
+            ],
+            [
+              65,
+              "Brenda",
+              "W."
+            ],
+            [
+              67,
+              "Michael",
+              "H."
+            ],
+            [
+              72,
+              "Kathryn",
+              "O."
+            ],
+            [
+              73,
+              "Alan",
+              "B."
+            ],
+            [
+              74,
+              "Harry",
+              "A."
+            ],
+            [
+              75,
+              "Andrea",
+              "H."
+            ],
+            [
+              77,
+              "Anne",
+              "W."
+            ],
+            [
+              78,
+              "Harry",
+              "H."
+            ],
+            [
+              81,
+              "Shirley",
+              "H."
+            ],
+            [
+              82,
+              "Arthur",
+              "D."
+            ],
+            [
+              83,
+              "Virginia",
+              "R."
+            ],
+            [
+              87,
+              "Phillip",
+              "B."
+            ],
+            [
+              95,
+              "Lisa",
+              "P."
+            ],
+            [
+              96,
+              "Jacqueline",
+              "A."
+            ],
+            [
+              97,
+              "Shirley",
+              "D."
+            ],
+            [
+              98,
+              "Nicole",
+              "M."
+            ],
+            [
+              100,
+              "Jean",
+              "M."
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "customers",
+        "orders"
+      ],
+      "notes": [
+        "Wren validated and executed this read-only governed query using the defined customers-to-orders relationship.",
+        "No order rows were found for the listed customers, satisfying the null check on the left join.",
+        "No amount calculation was required; AUD amount tolerance 0.000001 is therefore not applicable.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "Which customers have no orders?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 50097.9,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "March 2018 had the highest total order amount: AUD 622.00.",
+      "analyses": [
+        {
+          "title": "Highest monthly total order amount",
+          "sql": "WITH payment_per_order AS (\n  SELECT order_id, SUM(amount) AS payment_amount\n  FROM payments\n  GROUP BY order_id\n),\nmonthly_check AS (\n  SELECT\n    DATE_TRUNC('month', o.order_date) AS order_month,\n    SUM(p.payment_amount) AS recomputed_total_order_amount,\n    SUM(CASE WHEN p.payment_amount IS NULL THEN 1 ELSE 0 END) AS null_amount_orders\n  FROM orders AS o\n  JOIN payment_per_order AS p\n    ON p.order_id = o.order_id\n  GROUP BY DATE_TRUNC('month', o.order_date)\n)\nSELECT\n  v.order_month,\n  v.total_order_amount,\n  c.recomputed_total_order_amount,\n  c.null_amount_orders,\n  ABS(v.total_order_amount - c.recomputed_total_order_amount) AS amount_difference\nFROM monthly_order_summary AS v\nJOIN monthly_check AS c\n  ON v.order_month = c.order_month\nWHERE v.total_order_amount IS NOT NULL\n  AND c.null_amount_orders = 0\n  AND ABS(v.total_order_amount - c.recomputed_total_order_amount) <= 0.000001\nORDER BY v.total_order_amount DESC\nLIMIT 1",
+          "columns": [
+            "order_month",
+            "total_order_amount",
+            "recomputed_total_order_amount",
+            "null_amount_orders",
+            "amount_difference"
+          ],
+          "rows": [
+            [
+              "2018-03-01 00:00:00",
+              622.0,
+              622.0,
+              "0",
+              0.0
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "monthly_order_summary",
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "Amounts are AUD and include all order statuses; total order amount is not revenue.",
+        "Payment amounts were aggregated at order grain before the monthly comparison using the defined orders to payments relationship.",
+        "Null amount check passed and the recomputed amount matched within the 0.000001 tolerance.",
+        "SQL was validated and executed as read-only governed Wren SQL.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "Which month had the highest total order amount?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 46024.3,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "There are 99 orders total. Completed: 67; placed: 13; shipped: 13; returned: 4; return_pending: 2.",
+      "analyses": [
+        {
+          "title": "Orders by status",
+          "sql": "SELECT status, COUNT(*) AS order_count FROM orders GROUP BY status ORDER BY status",
+          "columns": [
+            "status",
+            "order_count"
+          ],
+          "rows": [
+            [
+              "completed",
+              67
+            ],
+            [
+              "placed",
+              13
+            ],
+            [
+              "return_pending",
+              2
+            ],
+            [
+              "returned",
+              4
+            ],
+            [
+              "shipped",
+              13
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "orders"
+      ],
+      "notes": [
+        "Validated and executed as governed read-only SQL through Wren.",
+        "No NULL status group was returned. Amount tolerance check was not applicable because this query does not calculate amounts.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "How many orders are there by status?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 26290.5,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "Monthly totals in AUD: January 496.00 total and 424.00 completed; February 415.00 and 400.00; March 622.00 and 279.00; April 139.00 and 0.00.",
+      "analyses": [
+        {
+          "title": "Monthly order amounts",
+          "sql": "SELECT\n  order_month,\n  total_order_amount,\n  completed_order_amount\nFROM monthly_order_summary\nWHERE order_month IS NOT NULL\n  AND total_order_amount IS NOT NULL\n  AND completed_order_amount IS NOT NULL\nORDER BY order_month",
+          "columns": [
+            "order_month",
+            "total_order_amount",
+            "completed_order_amount"
+          ],
+          "rows": [
+            [
+              "2018-01-01 00:00:00",
+              496.0,
+              424.0
+            ],
+            [
+              "2018-02-01 00:00:00",
+              415.0,
+              400.0
+            ],
+            [
+              "2018-03-01 00:00:00",
+              622.0,
+              279.0
+            ],
+            [
+              "2018-04-01 00:00:00",
+              139.0,
+              0.0
+            ]
+          ],
+          "truncated": false
+        },
+        {
+          "title": "Validation checks",
+          "sql": "SELECT\n  COUNT(*) AS order_rows_checked,\n  SUM(CASE WHEN o.amount IS NULL THEN 1 ELSE 0 END) AS null_order_amounts,\n  SUM(CASE WHEN p.payment_amount IS NULL THEN 1 ELSE 0 END) AS null_payment_aggregates,\n  SUM(CASE WHEN o.amount IS NOT NULL AND p.payment_amount IS NOT NULL\n            AND ABS(o.amount - p.payment_amount) > 0.000001\n           THEN 1 ELSE 0 END) AS amount_mismatches_over_tolerance\nFROM orders o\nLEFT JOIN (\n  SELECT order_id, SUM(amount) AS payment_amount\n  FROM payments\n  GROUP BY order_id\n) p ON p.order_id = o.order_id",
+          "columns": [
+            "order_rows_checked",
+            "null_order_amounts",
+            "null_payment_aggregates",
+            "amount_mismatches_over_tolerance"
+          ],
+          "rows": [
+            [
+              99,
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "monthly_order_summary",
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "Executed as governed read-only Wren SQL.",
+        "Total order amount includes all statuses and is not revenue.",
+        "Completed-order amount uses status='completed'.",
+        "Payment amounts were aggregated per order; no nulls or mismatches above tolerance 0.000001 were found.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "What is the total order amount and completed-order amount by month?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 74081.0,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "Total payment amount is AUD 1,672.00: bank_transfer AUD 411.00, coupon AUD 185.00, credit_card AUD 871.00, and gift_card AUD 205.00.",
+      "analyses": [
+        {
+          "title": "Total payment amount by payment method",
+          "sql": "WITH payment_totals AS (\n  SELECT\n    p.payment_method,\n    SUM(p.amount) AS total_payment_amount\n  FROM payments AS p\n  GROUP BY p.payment_method\n),\npayment_per_order AS (\n  SELECT\n    p.order_id,\n    SUM(p.amount) AS payment_amount\n  FROM payments AS p\n  GROUP BY p.order_id\n),\norder_payment_check AS (\n  SELECT\n    SUM(o.amount) AS total_order_amount,\n    SUM(po.payment_amount) AS total_payment_amount,\n    SUM(CASE WHEN o.amount IS NULL OR po.payment_amount IS NULL THEN 1 ELSE 0 END) AS null_amount_order_rows\n  FROM orders AS o\n  LEFT JOIN payment_per_order AS po\n    ON po.order_id = o.order_id\n),\npayment_null_check AS (\n  SELECT\n    SUM(CASE WHEN p.amount IS NULL THEN 1 ELSE 0 END) AS null_payment_amount_rows,\n    SUM(CASE WHEN p.payment_method IS NULL THEN 1 ELSE 0 END) AS null_payment_method_rows\n  FROM payments AS p\n)\nSELECT\n  pt.payment_method,\n  pt.total_payment_amount,\n  pnc.null_payment_amount_rows,\n  pnc.null_payment_method_rows,\n  opc.total_order_amount,\n  opc.total_payment_amount AS reconciled_payment_amount,\n  opc.total_order_amount - opc.total_payment_amount AS reconciliation_difference,\n  opc.null_amount_order_rows,\n  ABS(opc.total_order_amount - opc.total_payment_amount) <= 0.000001 AS within_amount_tolerance\nFROM payment_totals AS pt\nCROSS JOIN payment_null_check AS pnc\nCROSS JOIN order_payment_check AS opc\nORDER BY pt.payment_method",
+          "columns": [
+            "payment_method",
+            "total_payment_amount",
+            "null_payment_amount_rows",
+            "null_payment_method_rows",
+            "total_order_amount",
+            "reconciled_payment_amount",
+            "reconciliation_difference",
+            "null_amount_order_rows",
+            "within_amount_tolerance"
+          ],
+          "rows": [
+            [
+              "bank_transfer",
+              411.0,
+              "0",
+              "0",
+              1672.0,
+              1672.0,
+              0.0,
+              "0",
+              true
+            ],
+            [
+              "coupon",
+              185.0,
+              "0",
+              "0",
+              1672.0,
+              1672.0,
+              0.0,
+              "0",
+              true
+            ],
+            [
+              "credit_card",
+              871.0,
+              "0",
+              "0",
+              1672.0,
+              1672.0,
+              0.0,
+              "0",
+              true
+            ],
+            [
+              "gift_card",
+              205.0,
+              "0",
+              "0",
+              1672.0,
+              1672.0,
+              0.0,
+              "0",
+              true
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "Amounts are AUD and include all statuses. Total order amount is not revenue.",
+        "Payments were aggregated per order for reconciliation using the defined payments to orders relationship.",
+        "Null payment amounts, null payment methods, and null order payment amounts were zero. Reconciliation difference was 0.0, within tolerance 0.000001.",
+        "Read-only governed SQL was validated and executed by Wren.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "What is the total payment amount by payment method?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 66922.2,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "There are 113 payments: 55 credit card, 33 bank transfer, 13 coupon, and 12 gift card.",
+      "analyses": [
+        {
+          "title": "Payments by payment method",
+          "sql": "SELECT payment_method, COUNT(payment_id) AS payment_count\nFROM payments\nGROUP BY payment_method\nORDER BY payment_method",
+          "columns": [
+            "payment_method",
+            "payment_count"
+          ],
+          "rows": [
+            [
+              "bank_transfer",
+              33
+            ],
+            [
+              "coupon",
+              13
+            ],
+            [
+              "credit_card",
+              55
+            ],
+            [
+              "gift_card",
+              12
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "payments"
+      ],
+      "notes": [
+        "Executed as governed read-only SQL through Wren.",
+        "No NULL payment methods were returned. Amount tolerance was not applicable because this query counts payments only.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "How many payments are there by payment method?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 24779.8,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "No. All data-quality checks passed.",
+      "analyses": [
+        {
+          "title": "Data-quality checks",
+          "sql": "WITH payment_totals AS (\n  SELECT\n    order_id,\n    SUM(amount) AS payment_amount\n  FROM payments\n  GROUP BY order_id\n),\nchecks AS (\n  SELECT\n    'orders_null_key_date_status_amount' AS check_name,\n    COUNT(*) AS failure_count\n  FROM orders\n  WHERE order_id IS NULL\n     OR order_date IS NULL\n     OR status IS NULL\n     OR amount IS NULL\n  UNION ALL\n  SELECT\n    'orders_orphan_customers' AS check_name,\n    COUNT(*) AS failure_count\n  FROM orders\n  LEFT JOIN customers\n    ON orders.customer_id = customers.customer_id\n  WHERE orders.customer_id IS NOT NULL\n    AND customers.customer_id IS NULL\n  UNION ALL\n  SELECT\n    'payments_null_key_or_amount' AS check_name,\n    COUNT(*) AS failure_count\n  FROM payments\n  WHERE payment_id IS NULL\n     OR order_id IS NULL\n     OR amount IS NULL\n  UNION ALL\n  SELECT\n    'payments_orphan_orders' AS check_name,\n    COUNT(*) AS failure_count\n  FROM payments\n  LEFT JOIN orders\n    ON payments.order_id = orders.order_id\n  WHERE orders.order_id IS NULL\n  UNION ALL\n  SELECT\n    'order_payment_amount_mismatch_over_tolerance' AS check_name,\n    COUNT(*) AS failure_count\n  FROM orders\n  LEFT JOIN payment_totals\n    ON orders.order_id = payment_totals.order_id\n  WHERE payment_totals.order_id IS NULL\n     OR ABS(orders.amount - payment_totals.payment_amount) > 0.000001\n)\nSELECT\n  check_name,\n  failure_count,\n  CASE WHEN failure_count = 0 THEN 'pass' ELSE 'fail' END AS status\nFROM checks\nORDER BY check_name",
+          "columns": [
+            "check_name",
+            "failure_count",
+            "status"
+          ],
+          "rows": [
+            [
+              "order_payment_amount_mismatch_over_tolerance",
+              0,
+              "pass"
+            ],
+            [
+              "orders_null_key_date_status_amount",
+              0,
+              "pass"
+            ],
+            [
+              "orders_orphan_customers",
+              0,
+              "pass"
+            ],
+            [
+              "payments_null_key_or_amount",
+              0,
+              "pass"
+            ],
+            [
+              "payments_orphan_orders",
+              0,
+              "pass"
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "customers",
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "Wren validated and executed the read-only governed query.",
+        "Payment amounts were aggregated at order grain and compared with a tolerance of 0.000001.",
+        "Amounts are AUD. Total order amount includes all statuses and is not revenue.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "Does the snapshot pass its data-quality checks?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 0.0,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "No. There are 0 orders without customers.",
+      "analyses": [
+        {
+          "title": "Orders without customers",
+          "sql": "SELECT SUM(CASE WHEN customers.customer_id IS NULL THEN 1 ELSE 0 END) AS orders_without_customers, SUM(CASE WHEN orders.customer_id IS NULL THEN 1 ELSE 0 END) AS orders_with_null_customer_id, SUM(CASE WHEN orders.customer_id IS NOT NULL AND customers.customer_id IS NULL THEN 1 ELSE 0 END) AS orders_with_unmatched_customer_id FROM orders LEFT JOIN customers ON orders.customer_id = customers.customer_id",
+          "columns": [
+            "orders_without_customers",
+            "orders_with_null_customer_id",
+            "orders_with_unmatched_customer_id"
+          ],
+          "rows": [
+            [
+              "0",
+              "0",
+              "0"
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "customers",
+        "orders"
+      ],
+      "notes": [
+        "Validated and executed as governed read-only SQL using the defined orders_customers relationship.",
+        "No null customer IDs or unmatched customer IDs were found.",
+        "Amount tolerance 0.000001 was not applicable because this check contains no amount comparison.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "Are there any orders without customers?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 34953.3,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "No. There are no payments without matching orders.",
+      "analyses": [
+        {
+          "title": "Payments without orders",
+          "sql": "WITH payment_by_order AS (\n  SELECT\n    order_id,\n    COUNT(*) AS payment_count,\n    SUM(amount) AS payment_amount\n  FROM payments\n  GROUP BY order_id\n)\nSELECT\n  COUNT(*) AS total_payments,\n  SUM(CASE WHEN p.order_id IS NULL THEN 1 ELSE 0 END) AS payments_with_null_order_id,\n  SUM(CASE WHEN o.order_id IS NULL AND p.order_id IS NOT NULL THEN p.payment_count ELSE 0 END) AS payments_without_orders,\n  SUM(CASE WHEN o.order_id IS NULL AND p.order_id IS NOT NULL THEN p.payment_amount ELSE 0 END) AS amount_without_orders_aud,\n  SUM(CASE WHEN o.order_id IS NOT NULL AND ABS(p.payment_amount - o.amount) > 0.000001 THEN 1 ELSE 0 END) AS matched_order_amount_mismatches_over_tolerance\nFROM payment_by_order p\nLEFT JOIN orders o\n  ON p.order_id = o.order_id",
+          "columns": [
+            "total_payments",
+            "payments_with_null_order_id",
+            "payments_without_orders",
+            "amount_without_orders_aud",
+            "matched_order_amount_mismatches_over_tolerance"
+          ],
+          "rows": [
+            [
+              99,
+              "0",
+              "0",
+              0.0,
+              "0"
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "Amounts are AUD.",
+        "Payments were aggregated per order before joining to orders.",
+        "No null payment order IDs were found.",
+        "No matched order amount differences exceeded 0.000001.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "Are there any payments without orders?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 35639.3,
+      "cached": false,
+      "instant_verified": true
+    },
+    {
+      "accepted": true,
+      "answer": "Overall average order value is AUD 16.88888888888889.",
+      "analyses": [
+        {
+          "title": "Overall average order value",
+          "sql": "WITH payment_totals AS (\n  SELECT\n    o.order_id,\n    SUM(p.amount) AS payment_amount\n  FROM orders AS o\n  LEFT JOIN payments AS p\n    ON p.order_id = o.order_id\n  GROUP BY o.order_id\n),\nchecks AS (\n  SELECT\n    COUNT(*) AS order_count,\n    SUM(CASE WHEN o.amount IS NULL THEN 1 ELSE 0 END) AS null_amount_count,\n    SUM(CASE\n      WHEN o.amount IS NOT NULL\n       AND ABS(o.amount - COALESCE(pt.payment_amount, 0)) > 0.000001\n      THEN 1 ELSE 0\n    END) AS amount_mismatch_count\n  FROM orders AS o\n  LEFT JOIN payment_totals AS pt\n    ON pt.order_id = o.order_id\n),\nmonthly_check AS (\n  SELECT\n    SUM(order_count) AS monthly_order_count,\n    SUM(total_order_amount) AS monthly_total_order_amount,\n    SUM(order_count * average_order_value) AS monthly_reconstructed_total\n  FROM monthly_order_summary\n)\nSELECT\n  AVG(o.amount) AS overall_average_order_value_aud,\n  c.order_count,\n  c.null_amount_count,\n  c.amount_mismatch_count,\n  m.monthly_order_count,\n  m.monthly_total_order_amount,\n  m.monthly_reconstructed_total,\n  ABS(SUM(o.amount) - m.monthly_total_order_amount) AS monthly_total_tolerance_diff\nFROM orders AS o\nCROSS JOIN checks AS c\nCROSS JOIN monthly_check AS m\nGROUP BY\n  c.order_count,\n  c.null_amount_count,\n  c.amount_mismatch_count,\n  m.monthly_order_count,\n  m.monthly_total_order_amount,\n  m.monthly_reconstructed_total",
+          "columns": [
+            "overall_average_order_value_aud",
+            "order_count",
+            "null_amount_count",
+            "amount_mismatch_count",
+            "monthly_order_count",
+            "monthly_total_order_amount",
+            "monthly_reconstructed_total",
+            "monthly_total_tolerance_diff"
+          ],
+          "rows": [
+            [
+              16.88888888888889,
+              99,
+              "0",
+              "0",
+              "99",
+              1672.0,
+              1672.0,
+              0.0
+            ]
+          ],
+          "truncated": false
+        }
+      ],
+      "models": [
+        "monthly_order_summary",
+        "orders",
+        "payments"
+      ],
+      "notes": [
+        "All statuses included at order grain in AUD.",
+        "Payment amounts were aggregated per order using the defined relationship.",
+        "No null order amounts or payment amount mismatches above 0.000001 were found.",
+        "The monthly summary reconciled to the orders total within 0.000001.",
+        "All amounts are AUD. Total order amount includes all statuses and payment methods and is not revenue or refund-adjusted. Completed-order amount includes only completed orders."
+      ],
+      "mode": "verified",
+      "question": "What is the overall average order value?",
+      "read_only": true,
+      "project_unchanged": true,
+      "model_used": "gpt-5.6-luna",
+      "reasoning_effort": "low",
+      "elapsed_ms": 45342.0,
+      "cached": false,
+      "instant_verified": true
+    }
+  ]
+}

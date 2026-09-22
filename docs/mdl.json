@@ -1,0 +1,329 @@
+{
+  "catalog": "wren",
+  "schema": "public",
+  "models": [
+    {
+      "name": "customers",
+      "tableReference": {
+        "catalog": "jaffle_shop",
+        "schema": "main",
+        "table": "customers"
+      },
+      "primaryKey": "customer_id",
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "INT",
+          "isCalculated": false,
+          "notNull": true,
+          "isPrimaryKey": true,
+          "properties": {
+            "description": "Customer id"
+          }
+        },
+        {
+          "name": "first_name",
+          "type": "TEXT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "First name"
+          }
+        },
+        {
+          "name": "last_name",
+          "type": "TEXT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Last name"
+          }
+        },
+        {
+          "name": "first_order",
+          "type": "DATE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "First order"
+          }
+        },
+        {
+          "name": "most_recent_order",
+          "type": "DATE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Most recent order"
+          }
+        },
+        {
+          "name": "number_of_orders",
+          "type": "BIGINT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Lifetime order count across all statuses; NULL means no orders."
+          }
+        },
+        {
+          "name": "customer_lifetime_value",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Lifetime recorded payment amount in AUD; NULL means no payments. Aggregate only at customer grain."
+          }
+        }
+      ],
+      "cached": false,
+      "properties": {
+        "description": "One row per customer, including customers with no orders. Lifetime value is all recorded payments in AUD, without refund adjustments."
+      }
+    },
+    {
+      "name": "orders",
+      "tableReference": {
+        "catalog": "jaffle_shop",
+        "schema": "main",
+        "table": "orders"
+      },
+      "primaryKey": "order_id",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "INT",
+          "isCalculated": false,
+          "notNull": true,
+          "isPrimaryKey": true,
+          "properties": {
+            "description": "Order id"
+          }
+        },
+        {
+          "name": "customer_id",
+          "type": "INT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Customer id"
+          }
+        },
+        {
+          "name": "order_date",
+          "type": "DATE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Order date"
+          }
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Status"
+          }
+        },
+        {
+          "name": "credit_card_amount",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Credit card amount"
+          }
+        },
+        {
+          "name": "coupon_amount",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Coupon amount"
+          }
+        },
+        {
+          "name": "bank_transfer_amount",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Bank transfer amount"
+          }
+        },
+        {
+          "name": "gift_card_amount",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Gift card amount"
+          }
+        },
+        {
+          "name": "amount",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Recorded amount in AUD, including all payment methods; not refund-adjusted."
+          }
+        }
+      ],
+      "cached": false,
+      "properties": {
+        "description": "One row per order. Amounts are AUD aggregated from payments across all statuses and payment methods."
+      }
+    },
+    {
+      "name": "payments",
+      "tableReference": {
+        "catalog": "jaffle_shop",
+        "schema": "main",
+        "table": "stg_payments"
+      },
+      "primaryKey": "payment_id",
+      "columns": [
+        {
+          "name": "payment_id",
+          "type": "INT",
+          "isCalculated": false,
+          "notNull": true,
+          "isPrimaryKey": true,
+          "properties": {
+            "description": "Payment id"
+          }
+        },
+        {
+          "name": "order_id",
+          "type": "INT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Order id"
+          }
+        },
+        {
+          "name": "payment_method",
+          "type": "TEXT",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Payment method"
+          }
+        },
+        {
+          "name": "amount",
+          "type": "DOUBLE",
+          "isCalculated": false,
+          "notNull": false,
+          "isPrimaryKey": false,
+          "properties": {
+            "description": "Recorded amount in AUD, including all payment methods; not refund-adjusted."
+          }
+        }
+      ],
+      "cached": false,
+      "properties": {
+        "description": "One row per payment. Source staging view converts raw integer cents to AUD; do not divide amount by 100 again."
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "name": "orders_customers",
+      "models": [
+        "orders",
+        "customers"
+      ],
+      "joinType": "MANY_TO_ONE",
+      "condition": "orders.customer_id = customers.customer_id"
+    },
+    {
+      "name": "payments_orders",
+      "models": [
+        "payments",
+        "orders"
+      ],
+      "joinType": "MANY_TO_ONE",
+      "condition": "payments.order_id = orders.order_id"
+    }
+  ],
+  "views": [
+    {
+      "name": "monthly_order_summary",
+      "properties": {
+        "description": "One row per order month. Order-grain metrics in AUD, including all statuses; completed amount is separately identified."
+      },
+      "statement": "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count, COUNT(DISTINCT customer_id) AS purchasing_customers, SUM(amount) AS total_order_amount, AVG(amount) AS average_order_value, SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount FROM orders GROUP BY DATE_TRUNC('month', order_date)"
+    }
+  ],
+  "cubes": [
+    {
+      "name": "order_metrics",
+      "baseObject": "orders",
+      "measures": [
+        {
+          "name": "order_count",
+          "expression": "COUNT(*)",
+          "type": "BIGINT"
+        },
+        {
+          "name": "purchasing_customers",
+          "expression": "COUNT(DISTINCT customer_id)",
+          "type": "BIGINT"
+        },
+        {
+          "name": "total_order_amount",
+          "expression": "SUM(amount)",
+          "type": "DOUBLE"
+        },
+        {
+          "name": "average_order_value",
+          "expression": "AVG(amount)",
+          "type": "DOUBLE"
+        },
+        {
+          "name": "completed_order_amount",
+          "expression": "SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END)",
+          "type": "DOUBLE"
+        }
+      ],
+      "dimensions": [
+        {
+          "name": "status",
+          "expression": "status",
+          "type": "VARCHAR"
+        }
+      ],
+      "timeDimensions": [
+        {
+          "name": "order_date",
+          "expression": "order_date",
+          "type": "DATE"
+        }
+      ]
+    }
+  ],
+  "dataSource": "duckdb",
+  "layoutVersion": 3
+}
