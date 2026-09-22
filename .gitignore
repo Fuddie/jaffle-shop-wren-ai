@@ -43,3 +43,25 @@ connection.local.*
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Local Ask Wren runtime cache
+apps/jaffle-shop-analytics/local-cache.json
+apps/jaffle-shop-analytics/local-cache.tmp
+
+# Runtime, generated, and machine-local dashboard files
+apps/jaffle-shop-analytics/local-status.json
+apps/jaffle-shop-analytics/performance_*.json
+apps/jaffle-shop-analytics/**/__pycache__/
+*.log
+*.pid
+*.tmp
+node_modules/
+dist/
+build/
+coverage/
+auth.json
+credentials.json
+*_credentials.*
+*.pem
+*.key
+.codex/

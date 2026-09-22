@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "accepted": {"type": "boolean"},
+    "answer": {"type": "string", "maxLength": 2000},
+    "analyses": {"type": "array", "maxItems": 5, "items": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "maxLength": 100},
+        "sql": {"type": "string", "maxLength": 12000},
+        "columns": {"type": "array", "maxItems": 20, "items": {"type": "string"}},
+        "rows": {"type": "array", "maxItems": 200, "items": {"type": "array", "maxItems": 20, "items": {"type": ["string", "number", "boolean", "null"]}}}
+      }, "required": ["title", "sql", "columns", "rows"]
+    }},
+    "models": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "array", "maxItems": 10, "items": {"type": "string", "maxLength": 600}}
+  },
+  "required": ["accepted", "answer", "analyses", "models", "notes"]
+}

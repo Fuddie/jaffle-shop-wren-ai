@@ -36,8 +36,8 @@ These versions were observed in the working environment. They are a reproduction
 | dbt-duckdb | 1.11.0 | DuckDB adapter for dbt |
 | DuckDB | 1.5.5 | Local analytical database |
 | Wren AI CLI | 0.15.0 | Semantic definitions, validation, compilation, and queries |
-| PowerShell | — | Windows setup and CLI workflow |
-| YAML and SQL | — | Version-controlled definitions and business logic |
+| PowerShell | - | Windows setup and CLI workflow |
+| YAML and SQL | - | Version-controlled definitions and business logic |
 
 ## Semantic models and relationships
 
@@ -227,6 +227,33 @@ if ($LASTEXITCODE -ne 0) { throw 'Wren build failed' }
 - **Schema-driven modeling:** actual database columns were used instead of relying on stale upstream descriptive metadata. Keys and joins were checked against live data.
 - **Validation query planning:** a combined reconciliation query encountered a Wren planning error with reused aliases. Separate checks and a named payment-total CTE completed successfully without changing business logic.
 
+## Completed dashboard and local Ask Wren demo
+
+The completed dashboard is a responsive, snapshot-mode browser application at `apps/jaffle-shop-analytics`. It presents the validated Jaffle Shop sample with executive KPIs for customers, orders, purchasing customers, payments, total order amount, average order value, and completed-order amount. The monthly chart separates monetary series from order count, while the monthly table, customer ranking, order-status analysis, and data-quality cards expose the governed results. Total order amount includes every order status and is not revenue. Completed-order amount includes only completed orders.
+
+The browser loads the unchanged Wren MDL and the exported customer, order, and payment snapshots. It uses `monthly_order_summary` for the unfiltered monthly view and the `order_metrics` cube expressions for filtered metrics and KPIs. The dashboard keeps the `orders_customers` and `payments_orders` relationships and the business rules for order grain, payment aggregation, status handling, AUD amounts, and null checks.
+
+### Start the local dashboard on Windows
+
+Run this exact command from the `jaffle-wren` project directory:
+
+```powershell
+$env:PYTHONIOENCODING = 'utf-8'
+& ..\.venv\Scripts\python.exe -B apps\jaffle-shop-analytics\local_service.py
+```
+
+Open [http://127.0.0.1:4174/](http://127.0.0.1:4174/). The service binds only to `127.0.0.1` and serves both the dashboard and its local question endpoint. Stop it with `Ctrl+C` in the PowerShell window. The browser engine loads from the pinned Wren WebAssembly package on unpkg, so the first page load requires internet access; the sample data itself is local.
+
+### Ask Wren behavior
+
+The dashboard includes searchable Suggested questions and 15 curated answers. Curated results are persisted in `verified-examples.json`, generated and independently validated through Wren, and labelled **Instant verified answer**. They are saved governed results, not newly generated AI responses.
+
+An accepted arbitrary analytics question is sent to the local service, which invokes the authenticated Codex CLI from this project directory. Codex is restricted to a read-only sandbox, uses the Wren context and query tools, and returns structured SQL, result tables, models, and business-rule notes. Each returned SQL statement is independently validated and executed through Wren before it reaches the browser. New arbitrary questions are labelled **New analysis, typically 30 to 90 seconds**. Successful arbitrary answers are stored in the ignored local `local-cache.json` file and repeated questions are labelled **Cached answer**. Rejected, failed, or cancelled questions are never cached. The Clear local cache button removes that runtime file.
+
+Security controls reject command-style, file-editing, credential, prompt-disclosure, unrelated, and non-analytics requests. The service accepts one question at a time, enforces a 500 character limit, never exposes authentication data or local paths in responses, and checks that project files remain unchanged. SQL write statements are rejected and only read-only governed queries are returned.
+
+This is a local presentation demo over a fixed dbt Jaffle Shop sample snapshot. It is not a live warehouse connection, production service, revenue report, or deployment. Results depend on the bundled snapshot and the locally installed authenticated Codex CLI. Arbitrary questions are unavailable while the local service is stopped, but curated answers and the static dashboard remain usable.
+
 ## Future improvements
 
 - Automate key, relationship, null, and reconciliation checks in CI.
@@ -236,7 +263,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Wren build failed' }
 - Evaluate natural-language questions against expected SQL and answers.
 - Add refund transactions and agreed net-revenue definitions before reporting net revenue.
 - Consider fixed-precision monetary types upstream and test semantic-layer behavior.
-- Add a dashboard or chat interface and document its separate configuration.
+- Add CI automation for the existing dashboard and semantic checks.
 
 ## Screenshots
 

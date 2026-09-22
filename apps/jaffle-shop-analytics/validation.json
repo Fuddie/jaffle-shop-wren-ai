@@ -1,0 +1,307 @@
+{
+  "validated_at": "2026-09-22T13:20:44.599147+00:00",
+  "engine": "Wren 0.15.0",
+  "unique_queries_validated": 128,
+  "filter_combinations": 30,
+  "monthly_amount": 1672,
+  "monthly_orders": 99,
+  "baseline": {
+    "inventory": [
+      {
+        "customer_count": 100
+      }
+    ],
+    "payments": [
+      {
+        "payment_count": 113
+      }
+    ],
+    "kpis": [
+      {
+        "order_count": 99,
+        "purchasing_customers": 62,
+        "total_order_amount": 1672.0,
+        "average_order_value": 16.88888888888889,
+        "completed_order_amount": 1103.0
+      }
+    ],
+    "monthly": [
+      {
+        "order_month": "2018-01-01 00:00:00",
+        "order_count": 29,
+        "purchasing_customers": 24,
+        "total_order_amount": 496.0,
+        "average_order_value": 17.103448275862068,
+        "completed_order_amount": 424.0
+      },
+      {
+        "order_month": "2018-02-01 00:00:00",
+        "order_count": 27,
+        "purchasing_customers": 25,
+        "total_order_amount": 415.0,
+        "average_order_value": 15.37037037037037,
+        "completed_order_amount": 400.0
+      },
+      {
+        "order_month": "2018-03-01 00:00:00",
+        "order_count": 35,
+        "purchasing_customers": 31,
+        "total_order_amount": 622.0,
+        "average_order_value": 17.771428571428572,
+        "completed_order_amount": 279.0
+      },
+      {
+        "order_month": "2018-04-01 00:00:00",
+        "order_count": 8,
+        "purchasing_customers": 8,
+        "total_order_amount": 139.0,
+        "average_order_value": 17.375,
+        "completed_order_amount": 0.0
+      }
+    ],
+    "customers": [
+      {
+        "customer_id": 51,
+        "first_name": "Howard",
+        "last_name": "R.",
+        "order_count": 3,
+        "total_order_amount": 99.0
+      },
+      {
+        "customer_id": 3,
+        "first_name": "Kathleen",
+        "last_name": "P.",
+        "order_count": 3,
+        "total_order_amount": 65.0
+      },
+      {
+        "customer_id": 46,
+        "first_name": "Norma",
+        "last_name": "C.",
+        "order_count": 2,
+        "total_order_amount": 64.0
+      },
+      {
+        "customer_id": 30,
+        "first_name": "Christina",
+        "last_name": "W.",
+        "order_count": 2,
+        "total_order_amount": 57.0
+      },
+      {
+        "customer_id": 54,
+        "first_name": "Rose",
+        "last_name": "M.",
+        "order_count": 5,
+        "total_order_amount": 57.0
+      },
+      {
+        "customer_id": 70,
+        "first_name": "Helen",
+        "last_name": "F.",
+        "order_count": 2,
+        "total_order_amount": 54.0
+      },
+      {
+        "customer_id": 22,
+        "first_name": "Sean",
+        "last_name": "H.",
+        "order_count": 3,
+        "total_order_amount": 52.0
+      },
+      {
+        "customer_id": 50,
+        "first_name": "Billy",
+        "last_name": "L.",
+        "order_count": 2,
+        "total_order_amount": 47.0
+      },
+      {
+        "customer_id": 8,
+        "first_name": "Frank",
+        "last_name": "R.",
+        "order_count": 2,
+        "total_order_amount": 45.0
+      },
+      {
+        "customer_id": 71,
+        "first_name": "Gerald",
+        "last_name": "C.",
+        "order_count": 3,
+        "total_order_amount": 44.0
+      }
+    ],
+    "status": [
+      {
+        "status": "completed",
+        "order_count": 67,
+        "total_order_amount": 1103.0
+      },
+      {
+        "status": "placed",
+        "order_count": 13,
+        "total_order_amount": 284.0
+      },
+      {
+        "status": "shipped",
+        "order_count": 13,
+        "total_order_amount": 198.0
+      },
+      {
+        "status": "returned",
+        "order_count": 4,
+        "total_order_amount": 49.0
+      },
+      {
+        "status": "return_pending",
+        "order_count": 2,
+        "total_order_amount": 38.0
+      }
+    ],
+    "orphanOrders": [
+      {
+        "issues": 0
+      }
+    ],
+    "orphanPayments": [
+      {
+        "issues": 0
+      }
+    ],
+    "mismatches": [
+      {
+        "issues": 0
+      }
+    ]
+  },
+  "queries": [
+    "SELECT * FROM customers",
+    "SELECT * FROM orders",
+    "SELECT * FROM payments",
+    "SELECT COUNT(*) AS customer_count FROM customers",
+    "SELECT COUNT(*) AS payment_count FROM payments",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders ",
+    "SELECT order_month, order_count, purchasing_customers, total_order_amount, average_order_value, completed_order_amount\nFROM monthly_order_summary\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\n\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders \nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS issues FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL",
+    "SELECT COUNT(*) AS issues FROM payments p LEFT JOIN orders o ON p.order_id = o.order_id WHERE o.order_id IS NULL",
+    "WITH payment_totals AS (SELECT order_id, SUM(amount) AS payment_amount FROM payments GROUP BY order_id)\nSELECT COUNT(*) AS issues FROM orders o\nLEFT JOIN payment_totals pt ON o.order_id = pt.order_id\nWHERE ABS(o.amount - pt.payment_amount) > 0.000001\n   OR (o.amount IS NULL AND pt.payment_amount IS NOT NULL)\n   OR (o.amount IS NOT NULL AND pt.payment_amount IS NULL)",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'completed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'completed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.status = 'completed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE status = 'completed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'placed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'placed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.status = 'placed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE status = 'placed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'returned'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'returned'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.status = 'returned'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE status = 'returned'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'return_pending'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'return_pending'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.status = 'return_pending'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE status = 'return_pending'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'shipped'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE status = 'shipped'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.status = 'shipped'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE status = 'shipped'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01'",
+    "SELECT order_month, order_count, purchasing_customers, total_order_amount, average_order_value, completed_order_amount\nFROM monthly_order_summary WHERE order_month = DATE '2018-01-01'\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-01-01' AND o.order_date < DATE '2018-02-01'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'completed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'completed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-01-01' AND o.order_date < DATE '2018-02-01' AND o.status = 'completed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'completed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'placed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'placed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-01-01' AND o.order_date < DATE '2018-02-01' AND o.status = 'placed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'placed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'returned'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'returned'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-01-01' AND o.order_date < DATE '2018-02-01' AND o.status = 'returned'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'returned'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'return_pending'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'return_pending'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-01-01' AND o.order_date < DATE '2018-02-01' AND o.status = 'return_pending'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'return_pending'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'shipped'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'shipped'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-01-01' AND o.order_date < DATE '2018-02-01' AND o.status = 'shipped'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-01-01' AND order_date < DATE '2018-02-01' AND status = 'shipped'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01'",
+    "SELECT order_month, order_count, purchasing_customers, total_order_amount, average_order_value, completed_order_amount\nFROM monthly_order_summary WHERE order_month = DATE '2018-02-01'\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-02-01' AND o.order_date < DATE '2018-03-01'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'completed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'completed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-02-01' AND o.order_date < DATE '2018-03-01' AND o.status = 'completed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'completed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'placed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'placed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-02-01' AND o.order_date < DATE '2018-03-01' AND o.status = 'placed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'placed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'returned'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'returned'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-02-01' AND o.order_date < DATE '2018-03-01' AND o.status = 'returned'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'returned'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'return_pending'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'return_pending'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-02-01' AND o.order_date < DATE '2018-03-01' AND o.status = 'return_pending'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'return_pending'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'shipped'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'shipped'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-02-01' AND o.order_date < DATE '2018-03-01' AND o.status = 'shipped'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-02-01' AND order_date < DATE '2018-03-01' AND status = 'shipped'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01'",
+    "SELECT order_month, order_count, purchasing_customers, total_order_amount, average_order_value, completed_order_amount\nFROM monthly_order_summary WHERE order_month = DATE '2018-03-01'\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-03-01' AND o.order_date < DATE '2018-04-01'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'completed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'completed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-03-01' AND o.order_date < DATE '2018-04-01' AND o.status = 'completed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'completed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'placed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'placed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-03-01' AND o.order_date < DATE '2018-04-01' AND o.status = 'placed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'placed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'returned'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'returned'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-03-01' AND o.order_date < DATE '2018-04-01' AND o.status = 'returned'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'returned'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'return_pending'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'return_pending'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-03-01' AND o.order_date < DATE '2018-04-01' AND o.status = 'return_pending'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'return_pending'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'shipped'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'shipped'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-03-01' AND o.order_date < DATE '2018-04-01' AND o.status = 'shipped'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-03-01' AND order_date < DATE '2018-04-01' AND status = 'shipped'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01'",
+    "SELECT order_month, order_count, purchasing_customers, total_order_amount, average_order_value, completed_order_amount\nFROM monthly_order_summary WHERE order_month = DATE '2018-04-01'\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-04-01' AND o.order_date < DATE '2018-05-01'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'completed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'completed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-04-01' AND o.order_date < DATE '2018-05-01' AND o.status = 'completed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'completed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'placed'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'placed'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-04-01' AND o.order_date < DATE '2018-05-01' AND o.status = 'placed'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'placed'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'returned'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'returned'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-04-01' AND o.order_date < DATE '2018-05-01' AND o.status = 'returned'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'returned'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'return_pending'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'return_pending'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-04-01' AND o.order_date < DATE '2018-05-01' AND o.status = 'return_pending'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'return_pending'\nGROUP BY status\nORDER BY total_order_amount DESC, status",
+    "SELECT COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'shipped'",
+    "SELECT DATE_TRUNC('month', order_date) AS order_month, COUNT(*) AS order_count,\n  COUNT(DISTINCT customer_id) AS purchasing_customers,\n  SUM(amount) AS total_order_amount,\n  AVG(amount) AS average_order_value,\n  SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) AS completed_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'shipped'\nGROUP BY DATE_TRUNC('month', order_date)\nORDER BY order_month",
+    "SELECT c.customer_id, c.first_name, c.last_name, COUNT(*) AS order_count, SUM(o.amount) AS total_order_amount\nFROM orders o JOIN customers c ON o.customer_id = c.customer_id\nWHERE o.order_date >= DATE '2018-04-01' AND o.order_date < DATE '2018-05-01' AND o.status = 'shipped'\nGROUP BY c.customer_id, c.first_name, c.last_name\nORDER BY total_order_amount DESC, c.customer_id ASC\nLIMIT 10",
+    "SELECT status, COUNT(*) AS order_count, SUM(amount) AS total_order_amount\nFROM orders WHERE order_date >= DATE '2018-04-01' AND order_date < DATE '2018-05-01' AND status = 'shipped'\nGROUP BY status\nORDER BY total_order_amount DESC, status"
+  ]
+}
