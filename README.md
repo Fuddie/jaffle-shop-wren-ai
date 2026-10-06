@@ -129,14 +129,15 @@ The reproducible validation workflow runs 128 governed SQL queries across 30 mon
 
 ### 1. Prepare the workspace
 
-Use PowerShell and Python 3.11 or later; the observed environment used Python 3.14.4. This repository contains the Wren layer, not the upstream dbt project, seeds, or generated database. Supply a matching dbt `jaffle_shop` project separately, or use an existing database with the physical objects listed above.
+Use PowerShell and Python 3.13 or later, consistent with the copied project's prerequisite; the observed environment used Python 3.14.4. This repository includes the complete dbt source and seeds under [dbt/](dbt/), alongside the Wren layer. The generated database is excluded from Git and built locally.
+
+The dbt project is based on the original [dbt Labs Jaffle Shop DuckDB project](https://github.com/dbt-labs/jaffle_shop_duckdb). Its [README](dbt/README.md) is retained with personal example paths replaced by neutral placeholders; its [Apache 2.0 LICENSE](dbt/LICENSE) is preserved unchanged. Follow the instructions below for this repository: the upstream README references upstream-only setup files and images that are not bundled here.
 
 Commands below assume this relative layout:
 
 ```text
-workspace/
-├── jaffle_shop_duckdb/       # Upstream dbt project and local database
-└── jaffle-wren/             # This repository; run commands here
+jaffle-wren/                 # This repository; run commands here
+└── dbt/                     # Included dbt source and seeds; local database output
 ```
 
 Create a virtual environment inside this repository. Calling its executables directly avoids activation-policy issues:
@@ -148,9 +149,9 @@ $env:PYTHONIOENCODING = 'utf-8'
 & .\.venv\Scripts\wren.exe --version
 ```
 
-### 2. Prepare the upstream DuckDB database
+### 2. Build the included dbt project
 
-Skip rebuilding if the matching database already exists. Otherwise, configure a local `profiles.yml` in the upstream dbt directory with the profile name expected by its `dbt_project.yml`:
+Create `dbt/profiles.yml` in a text editor with the following contents. This machine-local file is ignored by Git. The `jaffle_shop` profile matches `dbt/dbt_project.yml`; the relative database path is resolved from `./dbt` when running the commands below:
 
 ```yaml
 jaffle_shop:
@@ -163,11 +164,11 @@ jaffle_shop:
       threads: 1
 ```
 
-From this repository, run the upstream project using the environment created above:
+From this repository, build the included seeds and models and run their dbt tests using the environment created above:
 
 ```powershell
 $dbtExe = (Resolve-Path '.\.venv\Scripts\dbt.exe').Path
-Push-Location '..\jaffle_shop_duckdb'
+Push-Location '.\dbt'
 try {
     & $dbtExe debug --profiles-dir .
     if ($LASTEXITCODE -ne 0) { throw 'dbt debug failed' }
@@ -178,14 +179,14 @@ try {
 }
 ```
 
-The expected file is `../jaffle_shop_duckdb/jaffle_shop.duckdb`, with `customers`, `orders`, and `stg_payments` in schema `main`. The filename matters because Wren models reference catalog `jaffle_shop`. Different upstream seeds or transformations can produce different results. See the [official DuckDB profile documentation](https://docs.getdbt.com/docs/local/connect-data-platform/duckdb-setup#connecting-to-duckdb) for connection fields.
+The generated database is `dbt/jaffle_shop.duckdb`, with `customers`, `orders`, and `stg_payments` in schema `main`. The filename matters because Wren models reference catalog `jaffle_shop`. Changing the bundled seeds or transformations can produce different results. The database, write-ahead logs, and dbt build artifacts are ignored by Git. See the [official DuckDB profile documentation](https://docs.getdbt.com/docs/local/connect-data-platform/duckdb-setup#connecting-to-duckdb) for connection fields.
 
 ### 3. Configure the local Wren profile
 
 The project already declares `profile: jaffle-shop`; no reinitialization is needed. If that profile is already configured correctly, proceed to validation. Otherwise, generate a local connection file from the resolved directory using forward slashes:
 
 ```powershell
-$duckdbDirectory = (Resolve-Path '..\jaffle_shop_duckdb').Path.Replace('\', '/')
+$duckdbDirectory = (Resolve-Path '.\dbt').Path.Replace('\', '/')
 $connectionJson = @{
     datasource = 'duckdb'
     url = $duckdbDirectory
@@ -270,7 +271,6 @@ The portfolio claim is reproducibility over a small, fixed sample. The project o
 
 - Automate key, relationship, null, and reconciliation checks in CI.
 - Add per-customer lifetime reconciliation and explicit checks for orders without payments.
-- Publish or pin the upstream dbt project and seed revision for full reproducibility.
 - Add a dependency lockfile and test setup on a clean Windows machine.
 - Evaluate natural-language questions against expected SQL and answers.
 - Add refund transactions and agreed net-revenue definitions before reporting net revenue.

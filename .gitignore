@@ -65,3 +65,11 @@ credentials.json
 *.pem
 *.key
 .codex/
+
+# dbt generated and machine-local files
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+dbt/*.duckdb
+dbt/*.duckdb.wal
+dbt/profiles.yml
