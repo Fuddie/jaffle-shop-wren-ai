@@ -12,10 +12,40 @@ from pathlib import Path
 from unittest.mock import patch
 
 import local_service as service
+import agent
 from policy import Rejected, sql_policy
 
 
 class ServiceChecks(unittest.TestCase):
+    def test_fingerprint_excludes_generated_database_copies(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'project'
+            (root / 'dbt').mkdir(parents=True)
+            source = root / 'model.sql'
+            source.write_text('SELECT 1')
+            unused = root / 'dbt/jaffle_shop.duckdb'
+            unused.write_bytes(b'unused build')
+            database = Path(directory) / 'jaffle_shop_duckdb/jaffle_shop.duckdb'
+            database.parent.mkdir()
+            database.write_bytes(b'active database')
+            read_bytes = Path.read_bytes
+
+            def read(path):
+                if path == unused:
+                    raise PermissionError('Unavailable generated database')
+                return read_bytes(path)
+
+            with patch.object(agent, 'ROOT', root), patch.object(Path, 'read_bytes', read):
+                before = agent.fingerprint()
+                self.assertNotIn(str(unused), before)
+                self.assertIn(str(source), before)
+                self.assertIn(str(database), before)
+                database.write_bytes(b'changed database')
+                self.assertNotEqual(before, agent.fingerprint())
+                database.write_bytes(b'active database')
+                source.write_text('SELECT 2')
+                self.assertNotEqual(before, agent.fingerprint())
+
     @classmethod
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()

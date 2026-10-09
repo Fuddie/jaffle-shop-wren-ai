@@ -78,7 +78,7 @@ def work(job_id,run):
         with LOCK:
             JOBS[job_id].update(state='cancelled' if run.cancelled.is_set() else 'error',error=str(error),stage='Cancelled' if run.cancelled.is_set() else 'Error')
     except Exception:
-        LOG.error('job=%s state=error',job_id)
+        LOG.exception('job=%s state=error',job_id)
         with LOCK:
             JOBS[job_id].update(state='error',error='The local question service could not complete this request. Try Verified examples.')
     finally:

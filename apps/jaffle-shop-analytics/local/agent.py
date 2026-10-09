@@ -90,7 +90,10 @@ def environment():
 
 def fingerprint():
     # Do not follow links or enumerate anything outside the named project and database.
-    files = [p for p in ROOT.rglob('*') if p.is_file() and not p.is_symlink() and '.git' not in p.parts]
+    # Generated database copies may be locked or unavailable OneDrive files.
+    # Hash the service's database below, rather than unrelated dbt build copies.
+    files = [p for p in ROOT.rglob('*') if p.is_file() and not p.is_symlink()
+             and '.git' not in p.parts and p.suffix != '.duckdb']
     database = ROOT.parent/'jaffle_shop_duckdb/jaffle_shop.duckdb'
     if database.is_file():
         files.append(database)
